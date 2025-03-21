@@ -118,30 +118,45 @@ function dijkstra(startId, endId) {
 
 // Draw the map with background and dot
 function drawMap() {
+    // Clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     // Draw background image
     if (backgroundImage.complete) {
         ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
     }
-    
-    // Draw green dot
-    ctx.fillStyle = 'green';
+
+    // Draw paths
     ctx.beginPath();
-    ctx.arc(dotX, dotY, 5, 0, 2 * Math.PI);
-    ctx.fill();
+    edges.forEach(edge => {
+        const fromNode = nodes.find(n => n.id === edge.from);
+        const toNode = nodes.find(n => n.id === edge.to);
+        ctx.moveTo(fromNode.x * scale, fromNode.y * scale);
+        ctx.lineTo(toNode.x * scale, toNode.y * scale);
+    });
+    ctx.strokeStyle = 'rgba(128, 128, 128, 0.5)'; // Gray with 50% opacity
+    ctx.lineWidth = 2; // 2 pixels wide
+    ctx.stroke();
+
+    // Draw destinations (e.g., rooms)
     destinations.forEach(dest => {
         ctx.fillStyle = 'rgba(0, 255, 0, 0.3)'; // Green, 30% opacity
         ctx.fillRect(dest.rect.x * scale, dest.rect.y * scale, dest.rect.w * scale, dest.rect.h * scale);
     });
 
-    // Draw nodes
+    // Draw nodes (e.g., intersections and room centers)
     nodes.forEach(node => {
         ctx.fillStyle = 'rgba(0, 0, 255, 0.5)'; // Blue, 50% opacity
         ctx.beginPath();
         ctx.arc(node.x * scale, node.y * scale, 5, 0, 2 * Math.PI);
         ctx.fill();
     });
+
+    // Draw green dot (current position)
+    ctx.fillStyle = 'green';
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, 5, 0, 2 * Math.PI);
+    ctx.fill();
 }
 
 // Animate the dot along the path
